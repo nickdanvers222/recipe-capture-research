@@ -6,7 +6,7 @@ import './App.css';
 const identifyImage = async (imageData) => {
   const Clarifai = require('clarifai');
   const app = new Clarifai.App({
-      apiKey: '2a4a8f6d9d4643f69ed3013cb0d0982d'
+      apiKey: 
   });
 
   let results = await app.models.predict('bd367be194cf45149e75f01d59f77ba7', {base64: imageData})
