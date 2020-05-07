@@ -3,13 +3,13 @@ import logo from './logo.svg';
 import './App.css';
 
 
-const identifyImage = async (imageData) => {
+const identifyImage = async (imageUrl) => {
   const Clarifai = require('clarifai');
   const app = new Clarifai.App({
-      apiKey: 
+      apiKey:
   });
-
-  let results = await app.models.predict('bd367be194cf45149e75f01d59f77ba7', {base64: imageData})
+  // {base64: imageData}
+  let results = await app.models.predict(Clarifai.GENERAL_MODEL,imageUrl)
   .then((response) => response.outputs[0].data.concepts )
   .catch((err) => console.log(err))
   return results;
@@ -20,41 +20,18 @@ const identifyImage = async (imageData) => {
 
 
 class App extends React.Component {
-  
   constructor(props) {
-    super(props); 
-    this.handleSubmit = this.handleSubmit.bind(this);
-    this.fileInput = React.createRef();
+    super(props)
+    this.state = {
+      text:''
+    }
   }
-  
-  
-
-
-  encodeImageFileAsURL(element) {
-    console.log('test');
-  var file = element.files[0];
-  var reader = new FileReader();
-  reader.onloadend = function() {
-    console.log('RESULT', reader.result)
-  }
-  reader.readAsDataURL(file);
-  }
-
-  handleSubmit(event) {
-    event.preventDefault();
-    console.log('1' , this.fileInput.current.files)
-    var file = this.fileInput.current.files[0]
-    console.log('2', file);
-    var reader = new FileReader();
-      reader.onloadend = async function() {
-        let obj = {photo:reader.result}
-        let example = await identifyImage(obj)
-        console.log(example)
-      }
-      reader.readAsDataURL(file);
-    
-    
-  }
+  handleSubmit = async () => {
+    console.log(this.state.text)
+    let result = await identifyImage(`${this.state.text}`);
+    console.log(result)
+  };
+   
 
 
   render() {
@@ -62,7 +39,8 @@ class App extends React.Component {
       <div className="App">
         <header className="App-header">
           <img src={logo} className="App-logo" alt="logo" />
-          <input type="file" onChange={this.handleSubmit}ref={this.fileInput} />
+          <input style={{width:'30vw'}} type='text' value={this.state.text} onChange={(event) => {this.setState({text:event.target.value})}}/>
+          <input type='submit'title='submit' onClick={this.handleSubmit}/>
           {}
           </header>
       </div>
