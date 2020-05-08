@@ -6,7 +6,8 @@ import './App.css';
 const identifyImage = async (imageUrl) => {
   const Clarifai = require('clarifai');
   const app = new Clarifai.App({
-      apiKey:
+      apiKey:'2a4a8f6d9d4643f69ed3013cb0d0982d'
+    });
   // {base64: imageData}
   let results = await app.models.predict('bd367be194cf45149e75f01d59f77ba7',imageUrl)
   .then((response) => response.outputs[0].data.concepts )
@@ -15,6 +16,19 @@ const identifyImage = async (imageUrl) => {
 };
 
 let forbiddenDictionary = [
+'meat',
+'barbecue',
+'steak',
+'fillet',
+'grilled salmon',
+'salad',
+'sauce',
+'seafood',
+'fish',
+'poultry',
+'sashimi',
+'fish fillet',
+'sushi',
 'delicious',
 'fast',
 'lunch',
@@ -56,10 +70,13 @@ class App extends React.Component {
 
   handleSubmit = async () => {
     console.log(this.state.text)
+    let filtered;
     let result = await identifyImage(`${this.state.text}`);
     // let filtered = result.filter( x => x.value > 0.80 && x.name !== "no person" && x.name !== "delicious" && x.name !== "fast" && x.name !== "vegetable" && x.name !== "relish" && x.name !== "sweet" && x.name !== "juice" && x.name !== "pasture" && x.name !== "chocolate" && x.name !== "condiment" && x.name !== "fruit" && x.name !== "citrus" && x.name !== "berry"  && x.name !== "dairy product"  && x.name !== "coffee")
-    let filtered = result.filter(x => x.value > 0.80 && !forbiddenDictionary.includes(x.name))
-    this.setState({tags:filtered})
+    result===undefined ? console.log('its undefined') : filtered = result.filter(x => x.value > 0.80 && !forbiddenDictionary.includes(x.name))
+    
+    
+    this.setState({tags:filtered, text:''})
     console.log(this.state)
     
     
